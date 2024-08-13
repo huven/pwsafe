@@ -119,6 +119,12 @@ jobs:
       working-directory: ${{ github.workspace }}
       run: xcodebuild -project Xcode/pwsafe-xcode6.xcodeproj -scheme pwsafe -configuration $XCODE_CONFIG
 
+    - name: Test
+      working-directory: install/macosx
+      # Execute tests defined by the CMake configuration.
+      # See https://cmake.org/cmake/help/latest/manual/ctest.1.html for more detail
+      run: ctest --build-config ${{env.BUILD_TYPE}} .
+
     - name: Install language files and create dmg
       working-directory: install/macosx
       run: make
