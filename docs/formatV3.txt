@@ -617,6 +617,8 @@ the others are optional (default to empty/zero).
 
     Att Content = The binary representation of the attachment.
       Note that this is limited to 4GB (2^32 bytes), which should suffice.
+      Interpretation of this field's value is per the media type specified
+      in Att MediaType (0x26)
 
 4. Extensibility
 
