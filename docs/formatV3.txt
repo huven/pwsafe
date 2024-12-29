@@ -373,13 +373,13 @@ TOTP Config                 0x21        1 byte        N              [29]
 TOTP Length                 0x22        1 byte        N              [29]
 TOTP Time Step              0x23        1 byte        N              [29]
 TOTP Start Time             0x24        time_t        N              [29]
-Att Title                   0x25        Text          N              [30]
-Att MediaType               0x26        Text          N              [30]
-Att FileName                0x27        Text          N              [30]
-Att FileCreationTime        0x28        time_t        N              [30]
-Att FileModificationTime    0x29        time_t        N              [30]
-Att FileAccessTime          0x2a        time_t        N              [30]
-Att Content                 0x2b        Binary        N              [30]
+Att Title                   0x44        Text          N              [30]
+Att MediaType               0x45        Text          N              [30]
+Att FileName                0x46        Text          N              [30]
+Att FileCreationTime        0x47        time_t        N              [30]
+Att FileModificationTime    0x48        time_t        N              [30]
+Att FileAccessTime          0x49        time_t        N              [30]
+Att Content                 0x4a        Binary        N              [30]
 Unknown (testing)           0xdf        -             N              [26]
 Implementation-specific     0xe0-0xfe   -             N              [27]
 End of Entry                0xff        [empty]       Y              [28]
@@ -618,7 +618,7 @@ the others are optional (default to empty/zero).
     Att Content = The binary representation of the attachment.
       Note that this is limited to 4GB (2^32 bytes), which should suffice.
       Interpretation of this field's value is per the media type specified
-      in Att MediaType (0x26)
+      in Att MediaType (0x45)
 
 4. Extensibility
 
