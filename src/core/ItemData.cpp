@@ -2416,3 +2416,36 @@ StringX CItemData::GetTotpAuthCode(time_t* pBasisTimeNow, double* pRatioExpired)
   }
   return retval;
 }
+
+CItemAtt CItemData::TransferAtt()
+{
+    CItemAtt att;
+    std::vector<unsigned char> content;
+    time_t t;
+
+    assert(CanTransferAtt());
+    att.CreateUUID();
+    
+    GetField(DATA_ATT_CONTENT, content);
+    att.SetContent(content.data(), content.size());
+    // destroy content.. vector with secure allocator?
+    
+    att.SetMediaType(GetField(DATA_ATT_MEDIATYPE));
+    att.SetCTime(GetCTime(t));
+    
+    // Transfer other fields here..
+
+    // Remove duplicate content
+    ClearField(DATA_ATT_TITLE);
+    ClearField(DATA_ATT_CONTENT);
+    ClearField(DATA_ATT_MEDIATYPE);
+    ClearField(DATA_ATT_FILENAME);
+    ClearField(DATA_ATT_FILEATIME);
+    ClearField(DATA_ATT_FILEMTIME);
+    ClearField(DATA_ATT_FILECTIME);
+
+    // Keep ref to att
+    SetAttUUID(att.GetUUID());
+
+    return att;
+}

@@ -19,6 +19,7 @@
 #include "../os/UUID.h"
 #include "StringX.h"
 #include "TotpCore.h"
+#include "ItemAtt.h"
 
 #include <time.h> // for time_t
 #include <bitset>
@@ -351,6 +352,10 @@ public:
 
   bool IsURLEmail(const CItemData *pbci) const
   { return GetEffectiveFieldValue(URL, pbci).find(_T("mailto:")) != StringX::npos; }
+    
+  bool CanTransferAtt() const
+  { return IsFieldSet(DATA_ATT_MEDIATYPE) && IsFieldSet(DATA_ATT_CONTENT); }
+  CItemAtt TransferAtt();
 
 private:
   EntryType m_entrytype;
