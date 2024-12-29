@@ -2423,7 +2423,7 @@ CItemAtt CItemData::TransferAtt()
     std::vector<unsigned char> content;
     time_t t;
 
-    assert(CanTransferAtt());
+    ASSERT(CanTransferAtt());
     att.CreateUUID();
     
     GetField(DATA_ATT_CONTENT, content);
