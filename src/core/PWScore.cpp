@@ -1203,6 +1203,10 @@ void PWScore::ProcessReadEntry(CItemData &ci_temp,
     m_ExpireCandidates.push_back(ExpPWEntry(ci_temp));
   }
 
+  // Holds attachment?
+  if (ci_temp.CanTransferAtt())
+    PutAtt(ci_temp.TransferAtt());
+
   // Finally, add it to the list!
   m_pwlist.insert(std::make_pair(ci_temp.GetUUID(), ci_temp));
 }
