@@ -2419,33 +2419,47 @@ StringX CItemData::GetTotpAuthCode(time_t* pBasisTimeNow, double* pRatioExpired)
 
 CItemAtt CItemData::TransferAtt()
 {
-    CItemAtt att;
-    std::vector<unsigned char> content;
-    time_t t;
+  CItemAtt att;
+  std::vector<unsigned char> content;
+  time_t t;
 
-    ASSERT(CanTransferAtt());
-    att.CreateUUID();
-    
-    GetField(DATA_ATT_CONTENT, content);
-    att.SetContent(content.data(), content.size());
-    // destroy content.. vector with secure allocator?
-    
-    att.SetMediaType(GetField(DATA_ATT_MEDIATYPE));
-    att.SetCTime(GetCTime(t));
-    
-    // Transfer other fields here..
+  ASSERT(CanTransferAtt());
+  att.CreateUUID();
+  att.SetCTime(GetCTime(t));
 
-    // Remove duplicate content
-    ClearField(DATA_ATT_TITLE);
-    ClearField(DATA_ATT_CONTENT);
-    ClearField(DATA_ATT_MEDIATYPE);
-    ClearField(DATA_ATT_FILENAME);
-    ClearField(DATA_ATT_FILEATIME);
-    ClearField(DATA_ATT_FILEMTIME);
-    ClearField(DATA_ATT_FILECTIME);
+  if (IsFieldSet(DATA_ATT_TITLE))
+    att.SetTitle(GetField(DATA_ATT_TITLE));
+  att.SetMediaType(GetField(DATA_ATT_MEDIATYPE));
+  if (IsFieldSet(DATA_ATT_FILENAME))
+    att.SetFileName(GetField(DATA_ATT_FILENAME));
+  if (IsFieldSet(DATA_ATT_FILECTIME)) {
+    CItem::GetTime(DATA_ATT_FILECTIME, t);
+    att.SetFileCTime(t);
+  }
+  if (IsFieldSet(DATA_ATT_FILEMTIME)) {
+    CItem::GetTime(DATA_ATT_FILEMTIME, t);
+    att.SetFileMTime(t);
+  }
+  if (IsFieldSet(DATA_ATT_FILEATIME)) {
+    CItem::GetTime(DATA_ATT_FILEATIME, t);
+    att.SetFileATime(t);
+  }
 
-    // Keep ref to att
-    SetAttUUID(att.GetUUID());
+  GetField(DATA_ATT_CONTENT, content);
+  att.SetContent(content.data(), content.size());
+  trashMemory(content.data(), content.size());
 
-    return att;
+  // Remove duplicate content
+  ClearField(DATA_ATT_TITLE);
+  ClearField(DATA_ATT_MEDIATYPE);
+  ClearField(DATA_ATT_FILENAME);
+  ClearField(DATA_ATT_FILECTIME);
+  ClearField(DATA_ATT_FILEMTIME);
+  ClearField(DATA_ATT_FILEATIME);
+  ClearField(DATA_ATT_CONTENT);
+
+  // Keep ref to att
+  SetAttUUID(att.GetUUID());
+
+  return att;
 }
