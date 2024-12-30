@@ -274,10 +274,14 @@ int CItemData::WriteCommon(PWSfile *out) const
                                   NOTES, URL, AUTOTYPE, POLICY,
                                   PWHIST, RUNCMD, EMAIL,
                                   SYMBOLS, POLICYNAME,
+                                  DATA_ATT_TITLE, DATA_ATT_MEDIATYPE, DATA_ATT_FILENAME,
                                   END};
   const FieldType TimeFields[] = {ATIME, CTIME, XTIME, PMTIME, RMTIME, TOTPSTARTTIME,
+                                  DATA_ATT_FILECTIME, DATA_ATT_FILEMTIME, DATA_ATT_FILEATIME,
                                   END};
-  const FieldType BinaryFields[] = { TOTPCONFIG, TOTPTIMESTEP, TOTPLENGTH, END };
+  const FieldType BinaryFields[] = { TOTPCONFIG, TOTPTIMESTEP, TOTPLENGTH,
+                                  DATA_ATT_CONTENT,
+                                  END };
 
   for (i = 0; TextFields[i] != END; i++)
     WriteIfSet(TextFields[i], out, true);
@@ -2417,9 +2421,8 @@ StringX CItemData::GetTotpAuthCode(time_t* pBasisTimeNow, double* pRatioExpired)
   return retval;
 }
 
-CItemAtt CItemData::TransferAtt()
+void CItemData::TransferAttOut(CItemAtt &att)
 {
-  CItemAtt att;
   std::vector<unsigned char> content;
   time_t t;
 
@@ -2450,6 +2453,34 @@ CItemAtt CItemData::TransferAtt()
   trashMemory(content.data(), content.size());
 
   // Remove duplicate content
+  TransferClear();
+
+  // Keep ref to att
+  SetAttUUID(att.GetUUID());
+}
+
+void CItemData::TransferAttIn(const CItemAtt &att) {
+  time_t t;
+
+  if (!att.GetTitle().empty())
+    CItem::SetField(DATA_ATT_TITLE, att.GetTitle());
+  CItem::SetField(DATA_ATT_MEDIATYPE, att.GetMediaType());
+  if (!att.GetFileName().empty())
+    CItem::SetField(DATA_ATT_FILENAME, att.GetFileName());
+  if (att.GetFileCTime(t) > 0)
+    CItem::SetTime(DATA_ATT_FILECTIME, t);
+  if (att.GetFileMTime(t) > 0)
+    CItem::SetTime(DATA_ATT_FILEMTIME, t);
+  if (att.GetFileATime(t) > 0)
+    CItem::SetTime(DATA_ATT_FILEATIME, t);
+
+  std::vector<unsigned char> content(att.GetContentSize());
+  att.GetContent(content.data(), att.GetContentLength());
+  CItem::SetField(DATA_ATT_CONTENT, content.data(), att.GetContentLength());
+  trashMemory(content.data(), content.size());
+}
+
+void CItemData::TransferClear() {
   ClearField(DATA_ATT_TITLE);
   ClearField(DATA_ATT_MEDIATYPE);
   ClearField(DATA_ATT_FILENAME);
@@ -2457,9 +2488,4 @@ CItemAtt CItemData::TransferAtt()
   ClearField(DATA_ATT_FILEMTIME);
   ClearField(DATA_ATT_FILEATIME);
   ClearField(DATA_ATT_CONTENT);
-
-  // Keep ref to att
-  SetAttUUID(att.GetUUID());
-
-  return att;
 }

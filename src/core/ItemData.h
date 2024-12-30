@@ -355,7 +355,9 @@ public:
     
   bool CanTransferAtt() const
   { return IsFieldSet(DATA_ATT_MEDIATYPE) && IsFieldSet(DATA_ATT_CONTENT); }
-  CItemAtt TransferAtt();
+  void TransferAttOut(CItemAtt &att);
+  void TransferAttIn(const CItemAtt &att);
+  void TransferClear();
 
 private:
   EntryType m_entrytype;
