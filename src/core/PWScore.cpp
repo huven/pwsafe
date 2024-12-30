@@ -606,7 +606,14 @@ struct RecordWriter {
       // Pre V30 does not support shortcuts at all - ignore completely
       return;
     }
+    if (m_version == PWSfile::V30 && p.second.HasAttRef()) {
+      CItemAtt &att = m_pcore->GetAtt(p.second.GetAttUUID());
+      p.second.TransferAttIn(att);
+    }
     m_pout->WriteRecord(p.second);
+    if (m_version == PWSfile::V30 && p.second.HasAttRef()) {
+      p.second.TransferClear();
+    }
     p.second.ClearStatus();
   }
 
@@ -1204,8 +1211,11 @@ void PWScore::ProcessReadEntry(CItemData &ci_temp,
   }
 
   // Holds attachment?
-  if (ci_temp.CanTransferAtt())
-    PutAtt(ci_temp.TransferAtt());
+  if (ci_temp.CanTransferAtt()) {
+    CItemAtt att;
+    ci_temp.TransferAttOut(att);
+    PutAtt(att);
+  }
 
   // Finally, add it to the list!
   m_pwlist.insert(std::make_pair(ci_temp.GetUUID(), ci_temp));
