@@ -2117,11 +2117,15 @@ bool CItemData::SetField(CItem::FieldType ft, const unsigned char* data, size_t 
     case EMAIL:
     case SYMBOLS:
     case POLICYNAME:
+    case DATA_ATT_TITLE:
+    case DATA_ATT_MEDIATYPE:
+    case DATA_ATT_FILENAME:
       if (!SetTextField(ft, data, len)) return false;
       break;
     case TOTPCONFIG:
     case TOTPTIMESTEP:
     case TOTPLENGTH:
+    case DATA_ATT_CONTENT:
       CItem::SetField(ft, data, len);
       break;
     case CTIME:
@@ -2130,6 +2134,9 @@ bool CItemData::SetField(CItem::FieldType ft, const unsigned char* data, size_t 
     case XTIME:
     case RMTIME:
     case TOTPSTARTTIME:
+    case DATA_ATT_FILECTIME:
+    case DATA_ATT_FILEMTIME:
+    case DATA_ATT_FILEATIME:
       if (!SetTimeField(ft, data, len)) return false;
       break;
     case XTIME_INT:
@@ -2475,7 +2482,7 @@ void CItemData::TransferAttIn(const CItemAtt &att) {
     CItem::SetTime(DATA_ATT_FILEATIME, t);
 
   std::vector<unsigned char> content(att.GetContentSize());
-  att.GetContent(content.data(), att.GetContentLength());
+  att.GetContent(content.data(), content.size());
   CItem::SetField(DATA_ATT_CONTENT, content.data(), att.GetContentLength());
   trashMemory(content.data(), content.size());
 }
