@@ -204,6 +204,7 @@ PasswordSafe V3.29 introduced Format 0x030B
 PasswordSafe V3.29Y introduced Format 0x030C
 PasswordSafe V3.30 introduced Format 0x030D
 PasswordSafe V3.47 introduced Format 0x030E
+PasswordSafe V3.68 introduced Format 0x030F
 
 [2] A universally unique identifier is needed in order to synchronize
 databases across different machine. Representation is described in
@@ -619,6 +620,8 @@ the others are optional (default to empty/zero).
       Note that this is limited to 4GB (2^32 bytes), which should suffice.
       Interpretation of this field's value is per the media type specified
       in Att MediaType (0x45)
+
+These parameters were introduced in version 0x030F (PasswordSafe V3.68).
 
 4. Extensibility
 
