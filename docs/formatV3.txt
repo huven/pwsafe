@@ -620,6 +620,11 @@ the others are optional (default to empty/zero).
 
 These parameters were introduced in version 0x030F (PasswordSafe V3.68).
 
+Although the Att Content field is theoretically limited to 4GB, attaching large
+files will impact performance and synchronization times, and could make the database
+inaccessible on mobile platforms. It is advised to keep the total database size
+below ...MB.
+
 4. Extensibility
 
 4.1 Forward compatability: Implementations of this format SHOULD NOT
