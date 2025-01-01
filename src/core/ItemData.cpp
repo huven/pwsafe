@@ -277,7 +277,7 @@ int CItemData::WriteCommon(PWSfile *out) const
                                   DATA_ATT_TITLE, DATA_ATT_MEDIATYPE, DATA_ATT_FILENAME,
                                   END};
   const FieldType TimeFields[] = {ATIME, CTIME, XTIME, PMTIME, RMTIME, TOTPSTARTTIME,
-                                  DATA_ATT_FILECTIME, DATA_ATT_FILEMTIME, DATA_ATT_FILEATIME,
+                                  DATA_ATT_MTIME,
                                   END};
   const FieldType BinaryFields[] = { TOTPCONFIG, TOTPTIMESTEP, TOTPLENGTH,
                                   DATA_ATT_CONTENT,
@@ -2134,9 +2134,7 @@ bool CItemData::SetField(CItem::FieldType ft, const unsigned char* data, size_t 
     case XTIME:
     case RMTIME:
     case TOTPSTARTTIME:
-    case DATA_ATT_FILECTIME:
-    case DATA_ATT_FILEMTIME:
-    case DATA_ATT_FILEATIME:
+    case DATA_ATT_MTIME:
       if (!SetTimeField(ft, data, len)) return false;
       break;
     case XTIME_INT:
@@ -2442,17 +2440,9 @@ void CItemData::TransferAttOut(CItemAtt &att)
   att.SetMediaType(GetField(DATA_ATT_MEDIATYPE));
   if (IsFieldSet(DATA_ATT_FILENAME))
     att.SetFileName(GetField(DATA_ATT_FILENAME));
-  if (IsFieldSet(DATA_ATT_FILECTIME)) {
-    CItem::GetTime(DATA_ATT_FILECTIME, t);
-    att.SetFileCTime(t);
-  }
-  if (IsFieldSet(DATA_ATT_FILEMTIME)) {
-    CItem::GetTime(DATA_ATT_FILEMTIME, t);
+  if (IsFieldSet(DATA_ATT_MTIME)) {
+    CItem::GetTime(DATA_ATT_MTIME, t);
     att.SetFileMTime(t);
-  }
-  if (IsFieldSet(DATA_ATT_FILEATIME)) {
-    CItem::GetTime(DATA_ATT_FILEATIME, t);
-    att.SetFileATime(t);
   }
 
   GetField(DATA_ATT_CONTENT, content);
@@ -2474,12 +2464,8 @@ void CItemData::TransferAttIn(const CItemAtt &att) {
   CItem::SetField(DATA_ATT_MEDIATYPE, att.GetMediaType());
   if (!att.GetFileName().empty())
     CItem::SetField(DATA_ATT_FILENAME, att.GetFileName());
-  if (att.GetFileCTime(t) > 0)
-    CItem::SetTime(DATA_ATT_FILECTIME, t);
   if (att.GetFileMTime(t) > 0)
-    CItem::SetTime(DATA_ATT_FILEMTIME, t);
-  if (att.GetFileATime(t) > 0)
-    CItem::SetTime(DATA_ATT_FILEATIME, t);
+    CItem::SetTime(DATA_ATT_MTIME, t);
 
   std::vector<unsigned char> content(att.GetContentSize());
   att.GetContent(content.data(), content.size());
@@ -2491,8 +2477,6 @@ void CItemData::TransferClear() {
   ClearField(DATA_ATT_TITLE);
   ClearField(DATA_ATT_MEDIATYPE);
   ClearField(DATA_ATT_FILENAME);
-  ClearField(DATA_ATT_FILECTIME);
-  ClearField(DATA_ATT_FILEMTIME);
-  ClearField(DATA_ATT_FILEATIME);
+  ClearField(DATA_ATT_MTIME);
   ClearField(DATA_ATT_CONTENT);
 }

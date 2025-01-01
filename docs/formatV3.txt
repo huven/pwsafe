@@ -377,10 +377,8 @@ TOTP Start Time             0x24        time_t        N              [29]
 Att Title                   0x44        Text          N              [30]
 Att MediaType               0x45        Text          N              [30]
 Att FileName                0x46        Text          N              [30]
-Att FileCreationTime        0x47        time_t        N              [30]
-Att FileModificationTime    0x48        time_t        N              [30]
-Att FileAccessTime          0x49        time_t        N              [30]
-Att Content                 0x4a        Binary        N              [30]
+Att Modification Time       0x47        time_t        N              [30]
+Att Content                 0x48        Binary        N              [30]
 Unknown (testing)           0xdf        -             N              [26]
 Implementation-specific     0xe0-0xfe   -             N              [27]
 End of Entry                0xff        [empty]       Y              [28]
@@ -611,10 +609,9 @@ the others are optional (default to empty/zero).
     Att FileName = Original file name - kept mainly for the extension, to support
       applications that require this for proper viewing.
 
-    Att FileCreationTime, Att FileModificationTime, Att FileAccessTime =
-      Times associated with the attachment file at the time of attachment.
-      Application may try to restore these when exporting the attachment.
-      Representation is as described in Section 3.1.3.
+    Att Modification Time = Modification time associated with the attachment file
+      at the time of attachment. Application may try to restore this when exporting
+      the attachment. Representation is as described in Section 3.1.3.
 
     Att Content = The binary representation of the attachment.
       Note that this is limited to 4GB (2^32 bytes), which should suffice.
