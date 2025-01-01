@@ -92,10 +92,8 @@ public:
     DATA_ATT_TITLE = 0x44,        // User-friendly name for the attachment
     DATA_ATT_MEDIATYPE = 0x45,    // MIME type - text string describing Media Type
     DATA_ATT_FILENAME = 0x46,     // Original file name
-    DATA_ATT_FILECTIME = 0x47,    // Times associated with the attachment file at the time of attachment
-    DATA_ATT_FILEMTIME = 0x48,
-    DATA_ATT_FILEATIME = 0x49,
-    DATA_ATT_CONTENT = 0x4a,      // The binary representation of the attachment
+    DATA_ATT_MTIME = 0x47,        // Modification time associated with the attachment file at the time of attachment
+    DATA_ATT_CONTENT = 0x48,      // The binary representation of the attachment
     LAST_DATA,                    // Start of unknown fields!
     LAST_ITEM_DATA_FIELD = 0x5f,  // beyond this is for other CItem subclasses
 
