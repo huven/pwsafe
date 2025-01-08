@@ -12,6 +12,7 @@
 #endif
 
 #include "core/PWSfileV3.h"
+#include "core/PWScore.h"
 #include "os/file.h"
 
 #include "gtest/gtest.h"
@@ -176,4 +177,58 @@ TEST_F(FileV3Test, UnknownPersistencyTest)
   EXPECT_EQ(d1, item);
   EXPECT_EQ(PWSfile::END_OF_FILE, fr.ReadRecord(item));
   EXPECT_EQ(PWSfile::SUCCESS, fr.Close());
+}
+
+TEST_F(FileV3Test, AttachmentTest)
+{
+  int attSizes[] = {1, 8, 16, 32, 48 };
+
+  for (unsigned long i=0; i<sizeof(attSizes) / sizeof(int); i++) {
+    printf("%lu\n", i);
+    int attSize = attSizes[i];
+
+    CItemData d1;
+    d1.CreateUUID();
+    d1.SetTitle(_T("future"));
+    d1.SetPassword(_T("possible"));
+
+    CItemAtt a1;
+    a1.CreateUUID();
+    a1.SetMediaType(_T("image/png"));
+    unsigned char buf[attSize];
+    a1.SetContent(buf, attSize);
+
+    d1.SetAttUUID(a1.GetUUID());
+
+    PWScore core;
+    const StringX passkey(L"3rdMambo");
+
+    core.SetPassKey(passkey);
+    core.Execute(AddEntryCommand::Create(&core, d1, pws_os::CUUID::NullUUID(), &a1));
+    EXPECT_TRUE(core.HasAtt(a1.GetUUID()));
+    EXPECT_EQ(1U, core.GetAtt(a1.GetUUID()).GetRefcount());
+    EXPECT_EQ(PWSfile::SUCCESS, core.WriteFile(fname.c_str(), PWSfile::V30));
+
+    core.ClearDBData();
+    EXPECT_EQ(PWSfile::WRONG_PASSWORD, core.ReadFile(fname.c_str(), L"WrongPassword", true));
+    EXPECT_EQ(PWSfile::SUCCESS, core.ReadFile(fname.c_str(), passkey, true));
+    ASSERT_EQ(1U, core.GetNumEntries());
+    ASSERT_EQ(1U, core.GetNumAtts());
+    ASSERT_TRUE(core.Find(d1.GetUUID()) != core.GetEntryEndIter());
+
+    const CItemData readFullItem = core.GetEntry(core.Find(d1.GetUUID()));
+    EXPECT_TRUE(readFullItem.HasAttRef());
+    // EXPECT_EQ(a1.GetUUID(), readFullItem.GetAttUUID());  random in V3
+    // EXPECT_EQ(d1, readFullItem);
+    ASSERT_TRUE(readFullItem.HasAttRef());
+    ASSERT_TRUE(core.HasAtt(readFullItem.GetAttUUID()));
+    EXPECT_EQ(1U, core.GetAtt(readFullItem.GetAttUUID()).GetRefcount());
+
+    core.Execute(DeleteEntryCommand::Create(&core, readFullItem));
+    ASSERT_EQ(0U, core.GetNumEntries());
+    ASSERT_EQ(0U, core.GetNumAtts());
+
+    // Get core to delete any existing commands
+    core.ClearCommands();
+  }
 }
