@@ -195,8 +195,8 @@ TEST_F(FileV3Test, AttachmentTest)
     CItemAtt a1;
     a1.CreateUUID();
     a1.SetMediaType(_T("image/png"));
-    unsigned char buf[attSize];
-    a1.SetContent(buf, attSize);
+    std::vector<unsigned char> buf(attSize);
+    a1.SetContent(buf.data(), attSize);
 
     d1.SetAttUUID(a1.GetUUID());
 
