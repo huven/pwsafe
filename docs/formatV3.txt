@@ -624,7 +624,7 @@ These parameters were introduced in version 0x030F (PasswordSafe V3.68).
 Although the Att Content field is theoretically limited to 4GB, attaching large
 files will impact performance and synchronization times, and could make the database
 inaccessible on mobile platforms. It is advised to keep the total database size
-below ...MB.
+below 100MB.
 
 4. Extensibility
 
