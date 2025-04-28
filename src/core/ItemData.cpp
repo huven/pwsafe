@@ -547,12 +547,14 @@ StringX CItemData::GetFieldValue(FieldType ft) const
       break;
     }
     case PASSKEY_ALGO_ID:
-      str = HasPasskey() ? std::to_wstring(GetPasskeyAlgorithmID()) : L"";
+      if (HasPasskey())
+        str = std::to_wstring(GetPasskeyAlgorithmID());
       break;
     case PASSKEY_PRIVATE_KEY:
       break; // never ever show to user
     case PASSKEY_SIGN_COUNT:
-      str = HasPasskey() ? std::to_wstring(GetPasskeySignCount()) : L"";
+      if (HasPasskey())
+        str = std::to_wstring(GetPasskeySignCount());
       break;
     default:
       ASSERT(0);
@@ -2373,12 +2375,12 @@ stringT CItemData::FieldName(FieldType ft)
   case DATA_ATT_FILENAME:  LoadAString(retval, IDSC_FLDNMDATAATTFILENAME); break;
   case DATA_ATT_MTIME:     LoadAString(retval, IDSC_FLDNMDATAATTMTIME); break;
   case DATA_ATT_CONTENT:   LoadAString(retval, IDSC_FLDNMDATAATTCONTENT); break;
-  case PASSKEY_CRED_ID:    LoadAString(retval, 0); break;
-  case PASSKEY_RP_ID:      LoadAString(retval, 0); break;
-  case PASSKEY_USER_HANDLE:LoadAString(retval, 0); break;
-  case PASSKEY_ALGO_ID:    LoadAString(retval, 0); break;
-  case PASSKEY_PRIVATE_KEY:LoadAString(retval, 0); break;
-  case PASSKEY_SIGN_COUNT: LoadAString(retval, 0); break;
+  case PASSKEY_CRED_ID:     LoadAString(retval, IDSC_FLDNMPASSKEYCREDID); break;
+  case PASSKEY_RP_ID:       LoadAString(retval, IDSC_FLDNMPASSKEYRPID); break;
+  case PASSKEY_USER_HANDLE: LoadAString(retval, IDSC_FLDNMPASSKEYUSERHANDLE); break;
+  case PASSKEY_ALGO_ID:     LoadAString(retval, IDSC_FLDNMPASSKEYALGOID); break;
+  case PASSKEY_PRIVATE_KEY: LoadAString(retval, IDSC_FLDNMPASSKEYPRIVATEKEY); break;
+  case PASSKEY_SIGN_COUNT:  LoadAString(retval, IDSC_FLDNMPASSKEYSIGNCOUNT); break;
 
   default:
     ASSERT(0);
