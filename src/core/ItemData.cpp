@@ -2525,9 +2525,17 @@ std::vector<unsigned char> CItemData::GetPasskeyUserHandle() const {
     return v;
 }
 
-std::vector<unsigned char> CItemData::GetPasskeyPrivateKey() const {
-    std::vector<unsigned char> v;
-    GetField(PASSKEY_PRIVATE_KEY, v);
+std::vector<unsigned char, S_Alloc::SecureAlloc<unsigned char>> CItemData::GetPasskeyPrivateKey() const {
+    std::vector<unsigned char, S_Alloc::SecureAlloc<unsigned char>> v;
+
+    auto fiter = m_fields.find(PASSKEY_PRIVATE_KEY);
+    if (fiter == m_fields.end())
+        return v;
+
+    size_t length = fiter->second.GetSize();
+    v.resize(length);
+    GetField(fiter->second, v.data(), length);
+    v.resize(length);
     return v;
 }
 
