@@ -438,6 +438,8 @@ inline bool CItemData::IsTextField(unsigned char t)
     t == SHORTCUTUUID ||
     t == TOTPCONFIG || t == TOTPLENGTH || t == TOTPSTARTTIME || t == TOTPTIMESTEP ||
     t == DATA_ATT_MTIME || t == DATA_ATT_CONTENT ||
+    t == PASSKEY_CRED_ID || t == PASSKEY_USER_HANDLE || t == PASSKEY_ALGO_ID ||
+    t == PASSKEY_PRIVATE_KEY || t == PASSKEY_SIGN_COUNT ||
     t >= LAST_DATA);
 }
 #endif /* __ITEMDATA_H */

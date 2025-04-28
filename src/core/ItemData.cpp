@@ -526,6 +526,30 @@ StringX CItemData::GetFieldValue(FieldType ft) const
       break;
     case DATA_ATT_CONTENT:
       break;
+    case PASSKEY_CRED_ID:
+    {
+      std::wostringstream oss;
+      for (unsigned char c : GetPasskeyCredentialID())
+        oss << std::hex << std::setw(2) << std::setfill(L'0') << static_cast<int>(c);
+      str = oss.str();
+      break;
+    }
+    case PASSKEY_USER_HANDLE:
+    {
+      std::wostringstream oss;
+      for (unsigned char c : GetPasskeyUserHandle())
+        oss << std::hex << std::setw(2) << std::setfill(L'0') << static_cast<int>(c);
+      str = oss.str();
+      break;
+    }
+    case PASSKEY_ALGO_ID:
+      str = HasPasskey() ? std::to_wstring(GetPasskeyAlgorithmID()) : L"";
+      break;
+    case PASSKEY_PRIVATE_KEY:
+      break; // never ever show to user
+    case PASSKEY_SIGN_COUNT:
+      str = HasPasskey() ? std::to_wstring(GetPasskeySignCount()) : L"";
+      break;
     default:
       ASSERT(0);
     }
