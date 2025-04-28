@@ -2456,3 +2456,56 @@ void CItemData::ClearAttachment() {
   ClearField(DATA_ATT_MTIME);
   ClearField(DATA_ATT_CONTENT);
 }
+
+int32 CItemData::GetPasskeyAlgorithmID() const {
+    std::vector<unsigned char> v;
+    GetField(PASSKEY_ALGO_ID, v);
+    ASSERT(v.size() == 4 || v.size() == 0);
+    return v.size() == 4 ? getInt32(v.data()) : 0;
+}
+
+uint32 CItemData::GetPasskeySignCount() const {
+    std::vector<unsigned char> v;
+    GetField(PASSKEY_SIGN_COUNT, v);
+    ASSERT(v.size() == 4 || v.size() == 0);
+    return v.size() == 4 ? getInt32(v.data()) : 0;
+}
+
+std::vector<unsigned char> CItemData::GetPasskeyCredentialID() const {
+    std::vector<unsigned char> v;
+    GetField(PASSKEY_CRED_ID, v);
+    return v;
+}
+
+std::vector<unsigned char> CItemData::GetPasskeyUserHandle() const {
+    std::vector<unsigned char> v;
+    GetField(PASSKEY_USER_HANDLE, v);
+    return v;
+}
+
+std::vector<unsigned char> CItemData::GetPasskeyPrivateKey() const {
+    std::vector<unsigned char> v;
+    GetField(PASSKEY_PRIVATE_KEY, v);
+    return v;
+}
+
+void CItemData::SetPasskeyAlgorithmID(const int32 algo_id) {
+    unsigned char buf[4];
+    putInt32(buf, algo_id);
+    CItem::SetField(PASSKEY_ALGO_ID, buf, 4);
+}
+
+void CItemData::SetPasskeySignCount(const uint32 sign_count) {
+    unsigned char buf[4];
+    putInt32(buf, sign_count);
+    CItem::SetField(PASSKEY_SIGN_COUNT, buf, 4);
+}
+
+void CItemData::ClearPasskey() {
+    ClearField(PASSKEY_CRED_ID);
+    ClearField(PASSKEY_RP_ID);
+    ClearField(PASSKEY_USER_HANDLE);
+    ClearField(PASSKEY_ALGO_ID);
+    ClearField(PASSKEY_PRIVATE_KEY);
+    ClearField(PASSKEY_SIGN_COUNT);
+}

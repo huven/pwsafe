@@ -376,6 +376,31 @@ public:
   bool HasAttachment() const            { return IsAttMediaTypeSet();            }
   void ClearAttachment();
 
+  // Passkey
+  bool IsPasskeyCredentialIDSet() const    { return IsFieldSet(PASSKEY_CRED_ID);     }
+  bool IsPasskeyRelyingPartyIDSet() const  { return IsFieldSet(PASSKEY_RP_ID);       }
+  bool IsPasskeyUserHandleSet() const      { return IsFieldSet(PASSKEY_USER_HANDLE); }
+  bool IsPasskeyAlgorithmIDSet() const     { return IsFieldSet(PASSKEY_ALGO_ID);     }
+  bool IsPasskeyPrivateKeySet() const      { return IsFieldSet(PASSKEY_PRIVATE_KEY); }
+  bool IsPasskeySignCountSet() const       { return IsFieldSet(PASSKEY_SIGN_COUNT);  }
+
+  StringX GetPasskeyRelyingPartyID() const { return GetField(PASSKEY_RP_ID);         }
+  int32 GetPasskeyAlgorithmID() const;
+  uint32 GetPasskeySignCount() const;
+  std::vector<unsigned char> GetPasskeyCredentialID() const;
+  std::vector<unsigned char> GetPasskeyUserHandle() const;
+  std::vector<unsigned char> GetPasskeyPrivateKey() const;
+
+  void SetPasskeyRelyingPartyID(const StringX &rp_id) { CItem::SetField(PASSKEY_RP_ID, rp_id); }
+  void SetPasskeyAlgorithmID(const int32 algo_id);
+  void SetPasskeySignCount(const uint32 sign_count);
+  void SetPasskeyCredentialID(const unsigned char *data, size_t len) { CItem::SetField(PASSKEY_CRED_ID, data, len);     };
+  void SetPasskeyUserHandle(const unsigned char *data, size_t len)   { CItem::SetField(PASSKEY_USER_HANDLE, data, len); };
+  void SetPasskeyPrivateKey(const unsigned char *data, size_t len)   { CItem::SetField(PASSKEY_PRIVATE_KEY, data, len); };
+
+  bool HasPasskey() const                  { return IsPasskeyPrivateKeySet();        }
+  void ClearPasskey();
+
 private:
   EntryType m_entrytype;
   EntryStatus m_entrystatus;
