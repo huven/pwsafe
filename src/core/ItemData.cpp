@@ -548,13 +548,13 @@ StringX CItemData::GetFieldValue(FieldType ft) const
     }
     case PASSKEY_ALGO_ID:
       if (HasPasskey())
-        str = std::to_wstring(GetPasskeyAlgorithmID());
+        str = std::to_wstring(GetPasskeyAlgorithmID()).c_str();
       break;
     case PASSKEY_PRIVATE_KEY:
       break; // never ever show to user
     case PASSKEY_SIGN_COUNT:
       if (HasPasskey())
-        str = std::to_wstring(GetPasskeySignCount());
+        str = std::to_wstring(GetPasskeySignCount()).c_str();
       break;
     default:
       ASSERT(0);
