@@ -275,11 +275,15 @@ int CItemData::WriteCommon(PWSfile *out) const
                                   PWHIST, RUNCMD, EMAIL,
                                   SYMBOLS, POLICYNAME,
                                   DATA_ATT_TITLE, DATA_ATT_MEDIATYPE, DATA_ATT_FILENAME,
+                                  PASSKEY_RP_ID,
                                   END};
   const FieldType TimeFields[] = {ATIME, CTIME, XTIME, PMTIME, RMTIME, TOTPSTARTTIME,
                                   DATA_ATT_MTIME,
                                   END};
-  const FieldType BinaryFields[] = { TOTPCONFIG, TOTPTIMESTEP, TOTPLENGTH, DATA_ATT_CONTENT, END };
+  const FieldType BinaryFields[] = { TOTPCONFIG, TOTPTIMESTEP, TOTPLENGTH, DATA_ATT_CONTENT,
+                                  PASSKEY_CRED_ID, PASSKEY_USER_HANDLE, PASSKEY_ALGO_ID,
+                                  PASSKEY_PRIVATE_KEY, PASSKEY_SIGN_COUNT,
+                                  END };
 
   for (i = 0; TextFields[i] != END; i++)
     WriteIfSet(TextFields[i], out, true);
@@ -531,7 +535,7 @@ StringX CItemData::GetFieldValue(FieldType ft) const
       std::wostringstream oss;
       for (unsigned char c : GetPasskeyCredentialID())
         oss << std::hex << std::setw(2) << std::setfill(L'0') << static_cast<int>(c);
-      str = oss.str();
+      str = oss.str().c_str();
       break;
     }
     case PASSKEY_USER_HANDLE:
@@ -539,7 +543,7 @@ StringX CItemData::GetFieldValue(FieldType ft) const
       std::wostringstream oss;
       for (unsigned char c : GetPasskeyUserHandle())
         oss << std::hex << std::setw(2) << std::setfill(L'0') << static_cast<int>(c);
-      str = oss.str();
+      str = oss.str().c_str();
       break;
     }
     case PASSKEY_ALGO_ID:
@@ -2147,12 +2151,18 @@ bool CItemData::SetField(CItem::FieldType ft, const unsigned char* data, size_t 
     case DATA_ATT_TITLE:
     case DATA_ATT_MEDIATYPE:
     case DATA_ATT_FILENAME:
+    case PASSKEY_RP_ID:
       if (!SetTextField(ft, data, len)) return false;
       break;
     case TOTPCONFIG:
     case TOTPTIMESTEP:
     case TOTPLENGTH:
     case DATA_ATT_CONTENT:
+    case PASSKEY_CRED_ID:
+    case PASSKEY_USER_HANDLE:
+    case PASSKEY_ALGO_ID:
+    case PASSKEY_PRIVATE_KEY:
+    case PASSKEY_SIGN_COUNT:
       CItem::SetField(ft, data, len);
       break;
     case CTIME:
@@ -2363,6 +2373,12 @@ stringT CItemData::FieldName(FieldType ft)
   case DATA_ATT_FILENAME:  LoadAString(retval, IDSC_FLDNMDATAATTFILENAME); break;
   case DATA_ATT_MTIME:     LoadAString(retval, IDSC_FLDNMDATAATTMTIME); break;
   case DATA_ATT_CONTENT:   LoadAString(retval, IDSC_FLDNMDATAATTCONTENT); break;
+  case PASSKEY_CRED_ID:    LoadAString(retval, 0); break;
+  case PASSKEY_RP_ID:      LoadAString(retval, 0); break;
+  case PASSKEY_USER_HANDLE:LoadAString(retval, 0); break;
+  case PASSKEY_ALGO_ID:    LoadAString(retval, 0); break;
+  case PASSKEY_PRIVATE_KEY:LoadAString(retval, 0); break;
+  case PASSKEY_SIGN_COUNT: LoadAString(retval, 0); break;
 
   default:
     ASSERT(0);

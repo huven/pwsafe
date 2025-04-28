@@ -357,14 +357,14 @@ void CShowCompareDlg::PopulateResults(bool bShowAll)
 
     if (i == CItemData::PASSKEY_CRED_ID || i == CItemData::PASSKEY_SIGN_COUNT) {
       if (m_pci->IsAlias())
-        sxValue1 = pci_base->GetFieldValue(i);
+        sxValue1 = pci_base->GetFieldValue((CItemData::FieldType)i);
       else
-        sxValue1 = pci->GetFieldValue(i);
+        sxValue1 = pci->GetFieldValue((CItemData::FieldType)i);
 
       if (m_pci_other->IsAlias())
-        sxValue2 = pci_other_base->GetFieldValue(i);
+        sxValue2 = pci_other_base->GetFieldValue((CItemData::FieldType)i);
       else
-        sxValue2 = pci_other->GetFieldValue(i);
+        sxValue2 = pci_other->GetFieldValue((CItemData::FieldType)i);
     }
 
     if (i == CItemData::POLICY && m_bDifferentDB) {
