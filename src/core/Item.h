@@ -210,7 +210,9 @@ protected:
 
   void GetField(const CItemField &field, unsigned char *value, size_t &length) const;
   void GetField(const CItemField &field, std::vector<unsigned char> &v) const;
+  void GetField(const CItemField &field, SecureVector<unsigned char> &v) const;
   void GetField(const int ft, std::vector<unsigned char> &v) const;
+  void GetField(const int ft, SecureVector<unsigned char> &v) const;
   uint8_t GetFieldAsByte(const CItemField& field, uint8_t default_value = 0) const;
   uint8_t GetFieldAsByte(const int ft, uint8_t default_value = 0) const;
   StringX GetField(int ft) const;

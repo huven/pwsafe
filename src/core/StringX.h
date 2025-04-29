@@ -24,6 +24,7 @@
 #include <cstddef> // for ptrdiff_t
 #include <cstdlib> // for malloc
 #include <cstring> // for memset
+#include <vector>
 
 #include "../os/typedefs.h"
 #include "PwsPlatform.h"

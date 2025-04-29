@@ -2513,29 +2513,21 @@ uint32 CItemData::GetPasskeySignCount() const {
     return v.size() == 4 ? getInt32(v.data()) : 0;
 }
 
-std::vector<unsigned char> CItemData::GetPasskeyCredentialID() const {
-    std::vector<unsigned char> v;
+SecureVector<unsigned char> CItemData::GetPasskeyCredentialID() const {
+    SecureVector<unsigned char> v;
     GetField(PASSKEY_CRED_ID, v);
     return v;
 }
 
-std::vector<unsigned char> CItemData::GetPasskeyUserHandle() const {
-    std::vector<unsigned char> v;
+SecureVector<unsigned char> CItemData::GetPasskeyUserHandle() const {
+    SecureVector<unsigned char> v;
     GetField(PASSKEY_USER_HANDLE, v);
     return v;
 }
 
-std::vector<unsigned char, S_Alloc::SecureAlloc<unsigned char>> CItemData::GetPasskeyPrivateKey() const {
-    std::vector<unsigned char, S_Alloc::SecureAlloc<unsigned char>> v;
-
-    auto fiter = m_fields.find(PASSKEY_PRIVATE_KEY);
-    if (fiter == m_fields.end())
-        return v;
-
-    size_t length = fiter->second.GetSize();
-    v.resize(length);
-    GetField(fiter->second, v.data(), length);
-    v.resize(length);
+SecureVector<unsigned char> CItemData::GetPasskeyPrivateKey() const {
+    SecureVector<unsigned char> v;
+    GetField(PASSKEY_PRIVATE_KEY, v);
     return v;
 }
 

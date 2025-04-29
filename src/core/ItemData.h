@@ -387,9 +387,9 @@ public:
   StringX GetPasskeyRelyingPartyID() const { return GetField(PASSKEY_RP_ID);         }
   int32 GetPasskeyAlgorithmID() const;
   uint32 GetPasskeySignCount() const;
-  std::vector<unsigned char> GetPasskeyCredentialID() const;
-  std::vector<unsigned char> GetPasskeyUserHandle() const;
-  std::vector<unsigned char, S_Alloc::SecureAlloc<unsigned char>> GetPasskeyPrivateKey() const;
+  SecureVector<unsigned char> GetPasskeyCredentialID() const;
+  SecureVector<unsigned char> GetPasskeyUserHandle() const;
+  SecureVector<unsigned char> GetPasskeyPrivateKey() const;
 
   void SetPasskeyRelyingPartyID(const StringX &rp_id) { CItem::SetField(PASSKEY_RP_ID, rp_id); }
   void SetPasskeyAlgorithmID(const int32 algo_id);
