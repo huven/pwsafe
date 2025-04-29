@@ -258,7 +258,7 @@ void CItem::GetField(const CItemField &field, std::vector<unsigned char> &v) con
   v.resize(length);
 }
 
-void CItem::GetField(const CItemField &field, SecureVector<unsigned char> &v) const
+void CItem::GetField(const CItemField &field, VectorX<unsigned char> &v) const
 {
   size_t length = roundUp(field.GetLength(), BlowFish::BLOCKSIZE);
   v.resize(length);
@@ -276,7 +276,7 @@ void CItem::GetField(const int ft, std::vector<unsigned char> &v) const
   GetField(fiter->second, v);
 }
 
-void CItem::GetField(const int ft, SecureVector<unsigned char> &v) const
+void CItem::GetField(const int ft, VectorX<unsigned char> &v) const
 {
   auto fiter = m_fields.find(ft);
   if (fiter == m_fields.end()) {

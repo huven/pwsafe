@@ -2513,20 +2513,20 @@ uint32 CItemData::GetPasskeySignCount() const {
     return v.size() == 4 ? getInt32(v.data()) : 0;
 }
 
-SecureVector<unsigned char> CItemData::GetPasskeyCredentialID() const {
-    SecureVector<unsigned char> v;
+VectorX<unsigned char> CItemData::GetPasskeyCredentialID() const {
+    VectorX<unsigned char> v;
     GetField(PASSKEY_CRED_ID, v);
     return v;
 }
 
-SecureVector<unsigned char> CItemData::GetPasskeyUserHandle() const {
-    SecureVector<unsigned char> v;
+VectorX<unsigned char> CItemData::GetPasskeyUserHandle() const {
+    VectorX<unsigned char> v;
     GetField(PASSKEY_USER_HANDLE, v);
     return v;
 }
 
-SecureVector<unsigned char> CItemData::GetPasskeyPrivateKey() const {
-    SecureVector<unsigned char> v;
+VectorX<unsigned char> CItemData::GetPasskeyPrivateKey() const {
+    VectorX<unsigned char> v;
     GetField(PASSKEY_PRIVATE_KEY, v);
     return v;
 }

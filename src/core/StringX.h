@@ -153,7 +153,7 @@ typedef std::basic_string<wchar_t,
                           S_Alloc::SecureAlloc<wchar_t> > StringX;
 
 template <typename T>
-using SecureVector = std::vector<T, S_Alloc::SecureAlloc<T>>;
+using VectorX = std::vector<T, S_Alloc::SecureAlloc<T>>;
 
 // Following should really be StringX member functions, but there's no 
 // elegant way of extending a template class without public inheritance, 

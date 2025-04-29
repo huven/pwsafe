@@ -387,16 +387,16 @@ public:
   StringX GetPasskeyRelyingPartyID() const { return GetField(PASSKEY_RP_ID);         }
   int32 GetPasskeyAlgorithmID() const;
   uint32 GetPasskeySignCount() const;
-  SecureVector<unsigned char> GetPasskeyCredentialID() const;
-  SecureVector<unsigned char> GetPasskeyUserHandle() const;
-  SecureVector<unsigned char> GetPasskeyPrivateKey() const;
+  VectorX<unsigned char> GetPasskeyCredentialID() const;
+  VectorX<unsigned char> GetPasskeyUserHandle() const;
+  VectorX<unsigned char> GetPasskeyPrivateKey() const;
 
   void SetPasskeyRelyingPartyID(const StringX &rp_id) { CItem::SetField(PASSKEY_RP_ID, rp_id); }
   void SetPasskeyAlgorithmID(const int32 algo_id);
   void SetPasskeySignCount(const uint32 sign_count);
-  void SetPasskeyCredentialID(const unsigned char *data, size_t len) { CItem::SetField(PASSKEY_CRED_ID, data, len);     };
-  void SetPasskeyUserHandle(const unsigned char *data, size_t len)   { CItem::SetField(PASSKEY_USER_HANDLE, data, len); };
-  void SetPasskeyPrivateKey(const unsigned char *data, size_t len)   { CItem::SetField(PASSKEY_PRIVATE_KEY, data, len); };
+  void SetPasskeyCredentialID(const VectorX<unsigned char> &v) { CItem::SetField(PASSKEY_CRED_ID, v.data(), v.size());     };
+  void SetPasskeyUserHandle(const VectorX<unsigned char> &v)   { CItem::SetField(PASSKEY_USER_HANDLE, v.data(), v.size()); };
+  void SetPasskeyPrivateKey(const VectorX<unsigned char> &v)   { CItem::SetField(PASSKEY_PRIVATE_KEY, v.data(), v.size()); };
 
   bool HasPasskey() const                  { return IsPasskeyPrivateKeySet();        }
   void ClearPasskey();
