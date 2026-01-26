@@ -19,6 +19,7 @@
 #include "../os/UUID.h"
 #include "StringX.h"
 #include "TotpCore.h"
+#include "CustomFields.h"
 
 #include <time.h> // for time_t
 #include <bitset>
@@ -171,6 +172,8 @@ public:
   StringX GetXTimeInt() const; // V30
   StringX GetPWHistory() const;  // V30
   StringX GetPreviousPassword() const;
+  CustomFieldList GetCustomFields() const;
+  StringX GetCustomFieldsRaw() const {return GetField(CUSTOMTEXT);}
   void GetPWPolicy(PWPolicy &pwp) const;
   StringX GetPWPolicy() const {return GetField(POLICY);}
   StringX GetRunCommand() const {return GetField(RUNCMD);}
@@ -241,6 +244,8 @@ public:
   void SetXTimeInt(int32 xint); // V30
   bool SetXTimeInt(const stringT &xint_str); // V30
   void SetPWHistory(const StringX &PWHistory);  // V30
+  void SetCustomFields(const CustomFieldList &fields);
+  void ClearCustomFields() {ClearField(CUSTOMTEXT);}
   void SetPWPolicy(const PWPolicy &pwp);
   bool SetPWPolicy(const stringT &cs_pwp);
   void SetRunCommand(const StringX &sx_RunCommand) {CItem::SetField(RUNCMD, sx_RunCommand);}
@@ -306,6 +311,7 @@ public:
   bool IsSymbolsSet() const                { return IsFieldSet(SYMBOLS);   }
   bool IsPolicyNameSet() const             { return IsFieldSet(POLICYNAME);}
   bool IsKBShortcutSet() const             { return IsFieldSet(KBSHORTCUT);}
+  bool IsCustomFieldsSet() const           { return IsFieldSet(CUSTOMTEXT);}
     
   bool IsGroupEmpty() const                { return !IsGroupSet();         }
   bool IsUserEmpty() const                 { return !IsUserSet();          }

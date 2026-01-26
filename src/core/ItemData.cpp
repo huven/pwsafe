@@ -276,7 +276,7 @@ int CItemData::WriteCommon(PWSfile *out) const
                                   PWHIST, RUNCMD, EMAIL,
                                   SYMBOLS, POLICYNAME,
                                   DATA_ATT_TITLE, DATA_ATT_MEDIATYPE, DATA_ATT_FILENAME,
-                                  PASSKEY_RP_ID,
+                                  PASSKEY_RP_ID, CUSTOMTEXT,
                                   END};
   const FieldType TimeFields[] = {ATIME, CTIME, XTIME, PMTIME, RMTIME, TOTPSTARTTIME,
                                   DATA_ATT_MTIME,
@@ -850,6 +850,11 @@ StringX CItemData::GetPWHistory() const
 StringX CItemData::GetPreviousPassword() const
 {
   return PWHistList::GetPreviousPassword(GetField(PWHIST));
+}
+
+CustomFieldList CItemData::GetCustomFields() const
+{
+  return CustomFieldList(GetField(CUSTOMTEXT));
 }
 
 StringX CItemData::GetPlaintext(const TCHAR &separator,
@@ -1599,6 +1604,12 @@ void CItemData::SetPWHistory(const StringX &PWHistory)
   CItem::SetField(PWHIST, pwh);
 }
 
+void CItemData::SetCustomFields(const CustomFieldList &fields)
+{
+  StringX data = fields;
+  CItem::SetField(CUSTOMTEXT, data);
+}
+
 void CItemData::SetPWPolicy(const PWPolicy &pwp)
 {
   const StringX cs_pwp(pwp);
@@ -1724,6 +1735,7 @@ void CItemData::SetFieldValue(FieldType ft, const StringX &value)
     case URL:        /* 0d */
     case AUTOTYPE:   /* 0e */
     case PWHIST:     /* 0f */
+    case CUSTOMTEXT: /* 30 */
     case EMAIL:      /* 14 */
     case RUNCMD:     /* 12 */
     case SYMBOLS:    /* 16 */
@@ -2169,6 +2181,7 @@ bool CItemData::SetField(CItem::FieldType ft, const unsigned char* data, size_t 
     case DATA_ATT_MEDIATYPE:
     case DATA_ATT_FILENAME:
     case PASSKEY_RP_ID:
+    case CUSTOMTEXT:
       if (!SetTextField(ft, data, len)) return false;
       break;
     case TOTPCONFIG:
@@ -2312,6 +2325,7 @@ void CItemData::SerializePlainText(vector<char> &v,
 
   push(v, POLICY, GetPWPolicy());
   push(v, PWHIST, GetPWHistory());
+  push(v, CUSTOMTEXT, GetCustomFieldsRaw());
 
   push(v, RUNCMD, GetRunCommand());
   GetDCA(i16); if (i16 != -1) push(v, DCA, i16);
@@ -2396,6 +2410,7 @@ stringT CItemData::FieldName(FieldType ft)
   case PASSKEY_ALGO_ID:     LoadAString(retval, IDSC_FLDNMPASSKEYALGOID); break;
   case PASSKEY_PRIVATE_KEY: LoadAString(retval, IDSC_FLDNMPASSKEYPRIVATEKEY); break;
   case PASSKEY_SIGN_COUNT:  LoadAString(retval, IDSC_FLDNMPASSKEYSIGNCOUNT); break;
+  case CUSTOMTEXT:          LoadAString(retval, IDSC_FLDNMCUSTOMFIELDS); break;
 
   default:
     ASSERT(0);
@@ -2436,6 +2451,7 @@ stringT CItemData::EngFieldName(FieldType ft)
   case SYMBOLS:       return _T("Symbols");
   case POLICYNAME:    return _T("Password Policy Name");
   case KBSHORTCUT:    return _T("Keyboard Shortcut");
+  case CUSTOMTEXT:    return _T("Custom Fields");
   case ATTREF:        return _T("Attachment Reference");
   case BASEUUID:      return _T("Base UUID");
   case ALIASUUID:     return _T("Alias UUID");
