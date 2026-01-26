@@ -10,38 +10,20 @@
 
 #include "CustomFields.h"
 #include "UTF8Conv.h"
+#include "StringXStream.h"
 
-#include <string>
+#include <iomanip>
 
-static int HexValue(unsigned char ch)
+static bool ReadHexValue(const unsigned char *data, size_t len, unsigned int &value)
 {
-  if (ch >= '0' && ch <= '9')
-    return ch - '0';
-  if (ch >= 'a' && ch <= 'f')
-    return ch - 'a' + 10;
-  if (ch >= 'A' && ch <= 'F')
-    return ch - 'A' + 10;
-  return -1;
-}
+  StringX hexstr;
+  hexstr.reserve(len);
+  for (size_t i = 0; i < len; i++)
+    hexstr += static_cast<wchar_t>(data[i]);
 
-static bool ReadHexByte(const unsigned char *data, unsigned char &value)
-{
-  int hi = HexValue(data[0]);
-  int lo = HexValue(data[1]);
-  if (hi < 0 || lo < 0)
-    return false;
-  value = static_cast<unsigned char>((hi << 4) | lo);
-  return true;
-}
-
-static bool ReadHexWord(const unsigned char *data, size_t &value)
-{
-  unsigned char hi = 0;
-  unsigned char lo = 0;
-  if (!ReadHexByte(data, hi) || !ReadHexByte(data + 2, lo))
-    return false;
-  value = (static_cast<size_t>(hi) << 8) | lo;
-  return true;
+  iStringXStream iss(hexstr);
+  iss >> std::hex >> value;
+  return !iss.fail() && iss.eof();
 }
 
 static bool IsSeparator(const unsigned char *data, size_t remaining)
@@ -50,22 +32,6 @@ static bool IsSeparator(const unsigned char *data, size_t remaining)
          data[0] == '0' && data[1] == '0' &&
          data[2] == '0' && data[3] == '0' &&
          data[4] == '0' && data[5] == '0';
-}
-
-static void AppendHexByte(std::string &out, unsigned char value)
-{
-  static const char hex_digits[] = "0123456789abcdef";
-  out.push_back(hex_digits[(value >> 4) & 0x0f]);
-  out.push_back(hex_digits[value & 0x0f]);
-}
-
-static void AppendHexWord(std::string &out, size_t value)
-{
-  static const char hex_digits[] = "0123456789abcdef";
-  out.push_back(hex_digits[(value >> 12) & 0x0f]);
-  out.push_back(hex_digits[(value >> 8) & 0x0f]);
-  out.push_back(hex_digits[(value >> 4) & 0x0f]);
-  out.push_back(hex_digits[value & 0x0f]);
 }
 
 StringX CustomField::GetName() const
@@ -180,32 +146,33 @@ CustomFieldList::CustomFieldList(const StringX &data) : m_numErr(0)
       break;
     }
 
-    unsigned char prop_id = 0;
-    size_t value_len = 0;
-    if (!ReadHexByte(utf8 + pos, prop_id) ||
-        !ReadHexWord(utf8 + pos + 2, value_len)) {
+    unsigned int prop_id = 0;
+    unsigned int value_len = 0;
+    if (!ReadHexValue(utf8 + pos, 2, prop_id) ||
+        !ReadHexValue(utf8 + pos + 2, 4, value_len)) {
       m_numErr++;
       break;
     }
-    if (prop_id == 0) {
+    if (prop_id == 0 || prop_id > 0xff) {
       m_numErr++;
       break;
     }
     pos += 6;
 
-    if (pos + value_len > utf8Len) {
+    size_t value_len_sz = static_cast<size_t>(value_len);
+    if (pos + value_len_sz > utf8Len) {
       m_numErr++;
       break;
     }
 
     StringX value;
-    if (!utf8conv.FromUTF8(utf8 + pos, value_len, value)) {
+    if (!utf8conv.FromUTF8(utf8 + pos, value_len_sz, value)) {
       m_numErr++;
       break;
     }
-    pos += value_len;
+    pos += value_len_sz;
 
-    if (current.HasProperty(prop_id)) {
+    if (current.HasProperty(static_cast<unsigned char>(prop_id))) {
       m_numErr++;
       continue;
     }
@@ -213,7 +180,7 @@ CustomFieldList::CustomFieldList(const StringX &data) : m_numErr(0)
       if (value.length() != 1 || (value[0] != _T('0') && value[0] != _T('1')))
         m_numErr++;
     }
-    current.SetProperty(prop_id, value);
+    current.SetProperty(static_cast<unsigned char>(prop_id), value);
   }
 
   if (!current.Empty()) {
@@ -232,7 +199,7 @@ CustomFieldList::operator StringX() const
     return _T("");
 
   CUTF8Conv utf8conv;
-  std::string out;
+  StringX out;
   bool wrote_field = false;
 
   for (auto field_iter = begin(); field_iter != end(); ++field_iter) {
@@ -241,7 +208,7 @@ CustomFieldList::operator StringX() const
       continue;
 
     if (wrote_field)
-      out.append("000000");
+      out += _T("000000");
 
     const auto &props = field.GetProperties();
     for (const auto &prop : props) {
@@ -261,19 +228,15 @@ CustomFieldList::operator StringX() const
         continue;
       }
 
-      AppendHexByte(out, prop.id);
-      AppendHexWord(out, utf8Len);
-      out.append(reinterpret_cast<const char *>(utf8), utf8Len);
+      oStringXStream oss;
+      oss.fill(charT('0'));
+      oss << std::hex << std::setw(2) << static_cast<int>(prop.id)
+          << std::setw(4) << static_cast<unsigned int>(utf8Len);
+      out += oss.str().c_str();
+      out += prop.value;
     }
     wrote_field = true;
   }
 
-  StringX result;
-  if (!out.empty()) {
-    if (!utf8conv.FromUTF8(reinterpret_cast<const unsigned char *>(out.data()), out.size(), result)) {
-      ASSERT(0);
-      result.clear();
-    }
-  }
-  return result;
+  return out;
 }
