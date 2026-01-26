@@ -270,6 +270,43 @@ TEST_F(ItemDataTest, PasswordHistory)
   EXPECT_EQ(emptyHeader, PWHistList::MakePWHistoryHeader(false, 0, 0));
 }
 
+TEST_F(ItemDataTest, CustomFields)
+{
+  const StringX raw = _T("010004Name020005Value0300012")
+                      _T("000000")
+                      _T("010004Wifi020004Test040003abc");
+
+  CustomFieldList custom_fields(raw);
+  EXPECT_EQ(0U, custom_fields.getErr());
+  EXPECT_EQ(raw, static_cast<StringX>(custom_fields));
+  ASSERT_EQ(2U, custom_fields.size());
+
+  EXPECT_EQ(_T("Name"), custom_fields[0].GetName());
+  EXPECT_EQ(_T("Value"), custom_fields[0].GetValue());
+  EXPECT_TRUE(custom_fields[0].IsSensitive());
+
+  bool found_unknown = false;
+  StringX unknown_value;
+  for (const auto &prop : custom_fields[1].GetProperties()) {
+    if (prop.id == 0x04) {
+      found_unknown = true;
+      unknown_value = prop.value;
+      break;
+    }
+  }
+  EXPECT_TRUE(found_unknown);
+  EXPECT_EQ(_T("abc"), unknown_value);
+
+  CItemData di;
+  di.SetCustomFields(custom_fields);
+  EXPECT_TRUE(di.IsCustomFieldsSet());
+  EXPECT_EQ(raw, di.GetCustomFieldsRaw());
+
+  CustomFieldList parsed = di.GetCustomFields();
+  EXPECT_EQ(0U, parsed.getErr());
+  EXPECT_EQ(raw, static_cast<StringX>(parsed));
+}
+
 TEST_F(ItemDataTest, UnknownFields)
 {
   unsigned char u1v[] = {10, 11, 33, 57};
