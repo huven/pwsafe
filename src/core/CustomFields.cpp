@@ -56,8 +56,8 @@ bool CustomField::GetSensitive(bool &sensitive) const
 {
   for (const auto &prop : m_props) {
     if (prop.id == PROP_SENSITIVE) {
-      if (prop.value.length() == 1 && (prop.value[0] == _T('0') || prop.value[0] == _T('1')))
-        sensitive = (prop.value[0] == _T('1'));
+      if (prop.value.length() == 1)
+        sensitive = (prop.value[0] != _T('0'));
       else
         sensitive = false;
       return true;
@@ -177,7 +177,7 @@ CustomFieldList::CustomFieldList(const StringX &data) : m_numErr(0)
       continue;
     }
     if (prop_id == CustomField::PROP_SENSITIVE) {
-      if (value.length() != 1 || (value[0] != _T('0') && value[0] != _T('1')))
+      if (value_len_sz != 1)
         m_numErr++;
     }
     current.SetProperty(static_cast<unsigned char>(prop_id), value);
