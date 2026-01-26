@@ -166,7 +166,9 @@ CustomFieldList::CustomFieldList(const StringX &data) : m_numErr(0)
     }
 
     StringX value;
-    if (!utf8conv.FromUTF8(utf8 + pos, value_len_sz, value)) {
+    VectorX<unsigned char> buf(utf8 + pos, utf8 + pos + value_len_sz);
+    buf.push_back(0); // null terminate for FromUTF8.
+    if (!utf8conv.FromUTF8(&buf[0], value_len_sz, value)) {
       m_numErr++;
       break;
     }
