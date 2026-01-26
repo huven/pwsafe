@@ -1735,11 +1735,11 @@ void CItemData::SetFieldValue(FieldType ft, const StringX &value)
     case URL:        /* 0d */
     case AUTOTYPE:   /* 0e */
     case PWHIST:     /* 0f */
-    case CUSTOMTEXT: /* 30 */
     case EMAIL:      /* 14 */
     case RUNCMD:     /* 12 */
     case SYMBOLS:    /* 16 */
     case POLICYNAME: /* 18 */
+    case CUSTOMTEXT: /* 30 */
       CItem::SetField(ft, value);
       break;
     case TOTPCONFIG:
